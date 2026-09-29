@@ -1,0 +1,77 @@
+import random
+import webbrowser
+
+# Genera un ID aleatorio entre 1 y 1000
+id_random = random.randint(1, 1000)
+
+# Construye la URL con el ID aleatorio
+url = f"https://picsum.photos/id/{id_random}/300/300"
+
+print(f"ID seleccionado: {id_random}")
+print(f"URL de la imagen: {url}")
+
+# Abre la imagen automáticamente en el navegador
+webbrowser.open(url)
+Opción 2: Ventana gráfica con un botón "Play"
+Si quieres una aplicación con una interfaz donde puedas pulsar el botón Play repetidamente para cambiar de foto sin reiniciar el script:
+
+Nota: Requiere instalar las librerías requests y Pillow. Puedes instalarlas ejecutando en tu terminal:
+
+pip install requests pillow
+
+Python
+import random
+import io
+import requests
+import tkinter as tk
+from PIL import Image, ImageTk
+
+def cargar_nueva_imagen():
+    # Generar ID aleatorio entre 1 y 1000
+    id_random = random.randint(1, 1000)
+    url = f"https://picsum.photos/id/{id_random}/300/300"
+    
+    try:
+        # Descargar la imagen de la URL
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        
+        # Convertir la imagen para mostrarla en Tkinter
+        image_bytes = io.BytesIO(response.content)
+        img = Image.open(image_bytes)
+        photo = ImageTk.PhotoImage(img)
+        
+        # Actualizar la interfaz gráfica
+        label_imagen.config(image=photo)
+        label_imagen.image = photo  # Guardar referencia para evitar que se borre de memoria
+        label_info.config(text=f"ID actual: {id_random}\n{url}")
+    except Exception as e:
+        label_info.config(text=f"Error al cargar ID {id_random}. Inténtalo de nuevo.")
+
+# Crear la ventana principal
+ventana = tk.Tk()
+ventana.title("Generador de Imagen Aleatoria")
+ventana.geometry("360x460")
+
+# Etiquetas de texto e imagen
+label_info = tk.Label(ventana, text="Haz clic en PLAY para cargar una imagen", wraplength=320)
+label_info.pack(pady=10)
+
+label_imagen = tk.Label(ventana)
+label_imagen.pack(pady=10)
+
+# Botón PLAY
+btn_play = tk.Button(
+    ventana, 
+    text="▶ PLAY", 
+    command=cargar_nueva_imagen, 
+    font=("Arial", 12, "bold"), 
+    bg="#4CAF50", 
+    fg="white", 
+    padx=20, 
+    pady=5
+)
+btn_play.pack(pady=10)
+
+# Ejecutar la aplicación
+ventana.mainloop()
